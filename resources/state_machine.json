@@ -1,0 +1,107 @@
+{
+  "StartAt": "UserEmailVerified",
+  "States": {
+    "UserEmailVerified": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:eu-west-1:832857168964:function:LambdasDesplieguesIntStac-pruebasergioemailverifie-vEAGETvb77zD",
+      "Comment": "Check if a user's email is valid",
+      "Next": "GetUserSubscriptionsBundleCodes",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 2,
+          "BackoffRate": 2,
+          "MaxAttempts": 4
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Runtime"
+          ],
+          "ResultPath": "$.error",
+          "Next": "Fail"
+        },
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error",
+          "Next": "Fail"
+        }
+      ]
+    },
+    "GetUserSubscriptionsBundleCodes": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:eu-west-1:832857168964:function:LambdasDesplieguesIntStac-pruebasergiogetSubsA530F-q1kI6SWlvTEU",
+      "Next": "SendEmailWithSubsBundleCodes",
+      "Comment": "Returns the subscription bundle data of a user",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 2,
+          "BackoffRate": 2,
+          "MaxAttempts": 4
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Runtime"
+          ],
+          "ResultPath": "$.error",
+          "Next": "Fail"
+        },
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error",
+          "Next": "Fail"
+        }
+      ]
+    },
+    "SendEmailWithSubsBundleCodes": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:eu-west-1:832857168964:function:LambdasDesplieguesIntStac-pruebasergiosendEmail4E9-7uWK1JThITkp",
+      "Comment": "Returns the status after sending the email",
+      "Next": "Success",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 2,
+          "BackoffRate": 2,
+          "MaxAttempts": 4
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.Runtime"
+          ],
+          "ResultPath": "$.error",
+          "Next": "Fail"
+        },
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.error",
+          "Next": "Fail"
+        }
+      ]
+    },
+    "Success": {
+      "Type": "Succeed"
+    },
+    "Fail": {
+      "Type": "Fail"
+    }
+  }
+}
